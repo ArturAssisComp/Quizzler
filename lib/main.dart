@@ -33,6 +33,24 @@ class QuizzlerStatefulApp extends StatefulWidget {
 }
 
 class _QuizzlerStatefulAppState extends State<QuizzlerStatefulApp> {
+  List<Icon> scoreKeeper = [];
+
+  Icon createIconResult(bool rightAnswer) {
+    IconData icon;
+    Color color;
+    if (rightAnswer) {
+      icon = Icons.check;
+      color = Colors.green;
+    } else {
+      icon = Icons.close;
+      color = Colors.red;
+    }
+    return Icon(
+      icon,
+      color: color,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -53,7 +71,11 @@ class _QuizzlerStatefulAppState extends State<QuizzlerStatefulApp> {
           ),
         ),
         TextButton(
-          onPressed: () {},
+          onPressed: () {
+            setState(() {
+              scoreKeeper.add(createIconResult(true));
+            });
+          },
           style: TextButton.styleFrom(
             backgroundColor: Colors.green,
             minimumSize: const Size(0, 80),
@@ -71,7 +93,11 @@ class _QuizzlerStatefulAppState extends State<QuizzlerStatefulApp> {
           height: 20,
         ),
         TextButton(
-          onPressed: () {},
+          onPressed: () {
+            setState(() {
+              scoreKeeper.add(createIconResult(false));
+            });
+          },
           style: TextButton.styleFrom(
             backgroundColor: Colors.red,
             minimumSize: const Size(0, 80),
@@ -87,6 +113,10 @@ class _QuizzlerStatefulAppState extends State<QuizzlerStatefulApp> {
         ),
         const SizedBox(
           height: 20,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: scoreKeeper,
         ),
       ],
     );
