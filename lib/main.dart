@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:quizzler/QuizManager.dart';
+
+QuizManager currentQuiz = QuizManager();
 
 void main() {
   runApp(const QuizzlerApp());
@@ -32,68 +35,10 @@ class QuizzlerStatefulApp extends StatefulWidget {
   State<QuizzlerStatefulApp> createState() => _QuizzlerStatefulAppState();
 }
 
-class _question {
-  _question({
-    required this.statement,
-    required this.answer,
-  });
-  String statement;
-  bool answer;
-}
-
 class _QuizzlerStatefulAppState extends State<QuizzlerStatefulApp> {
-  int currentQuestionIndex = 0;
-  List<Icon> scoreKeeper = [];
-  final List<_question> questions = [
-    _question(
-      statement: 'The sky is blue.',
-      answer: true,
-    ),
-    _question(
-      statement: 'The capital of Brazil is Brasília.',
-      answer: true,
-    ),
-    _question(
-      statement: 'The largest bone in the human body is the femur.',
-      answer: true,
-    ),
-    _question(
-      statement: 'The sun is a planet.',
-      answer: false,
-    ),
-    _question(
-      statement: 'The Nile is the longest river in the world.',
-      answer: true,
-    ),
-    _question(
-      statement:
-          'Albert Einstein won the Nobel Prize for his theory of relativity.',
-      answer: false,
-    ),
-    _question(
-      statement: 'Shakespeare wrote Hamlet.',
-      answer: true,
-    ),
-    _question(
-      statement: 'Dogs can see colors.',
-      answer: false,
-    ),
-    _question(
-      statement: 'Venus is the hottest planet in the solar system.',
-      answer: true,
-    ),
-    _question(
-      statement: 'The Great Wall of China can be seen from space.',
-      answer: false,
-    ),
-    _question(
-      statement: 'The smallest country in the world is Vatican City.',
-      answer: true,
-    ),
-  ];
+  List<Icon> scoreRowIcons = [];
 
   String questionStatement = '';
-  bool finishedGame = false;
 
   Icon createIconResult(bool rightAnswer) {
     IconData icon;
@@ -113,27 +58,23 @@ class _QuizzlerStatefulAppState extends State<QuizzlerStatefulApp> {
 
   @override
   void initState() {
-    questionStatement = questions[currentQuestionIndex].statement;
+    questionStatement = currentQuiz.statementOfCurrentQuestion;
     super.initState();
   }
 
   void tryAnswer(bool answer) {
-    if (!finishedGame) {
+    if (!currentQuiz.isQuizFinished) {
       setState(() {
         //Check if the answer was correct:
-        if (questions[currentQuestionIndex++].answer == answer) {
-          scoreKeeper.add(createIconResult(true));
+        currentQuiz.answerCurrentQuestion(answer);
+        if (currentQuiz.lastResult!) {
+          scoreRowIcons.add(createIconResult(true));
         } else {
-          scoreKeeper.add(createIconResult(false));
+          scoreRowIcons.add(createIconResult(false));
         }
 
         //Update the question statement
-        if (currentQuestionIndex >= questions.length) {
-          finishedGame = true;
-          questionStatement = 'GAME FINISHED';
-        } else {
-          questionStatement = questions[currentQuestionIndex].statement;
-        }
+        questionStatement = currentQuiz.statementOfCurrentQuestion;
       });
     }
   }
@@ -199,7 +140,7 @@ class _QuizzlerStatefulAppState extends State<QuizzlerStatefulApp> {
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
-          children: scoreKeeper,
+          children: scoreRowIcons,
         ),
       ],
     );
