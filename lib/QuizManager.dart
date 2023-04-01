@@ -58,10 +58,18 @@ class QuizManager {
   bool get isQuizFinished => _finishedQuiz;
   bool? get lastResult => _lastResult;
   int get totalScore => _totalScore;
+  int get maxScore => _questions.length;
   String get statementOfCurrentQuestion =>
       _finishedQuiz ? 'QUIZ FINISHED' : _questions[_questionIndex].statement;
 
   //Methods:
+  void reset() {
+    _questionIndex = 0;
+    _finishedQuiz = false;
+    _totalScore = 0;
+    _lastResult = null;
+  }
+
   Question? getCurrentQuestion() =>
       _finishedQuiz ? null : _questions[_questionIndex];
 

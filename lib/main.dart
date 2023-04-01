@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quizzler/QuizManager.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 QuizManager currentQuiz = QuizManager();
 
@@ -37,8 +38,15 @@ class QuizzlerStatefulApp extends StatefulWidget {
 
 class _QuizzlerStatefulAppState extends State<QuizzlerStatefulApp> {
   List<Icon> scoreRowIcons = [];
-
   String questionStatement = '';
+
+  void resetQuiz() {
+    currentQuiz.reset();
+    setState(() {
+      scoreRowIcons = [];
+      questionStatement = currentQuiz.statementOfCurrentQuestion;
+    });
+  }
 
   Icon createIconResult(bool rightAnswer) {
     IconData icon;
@@ -75,6 +83,30 @@ class _QuizzlerStatefulAppState extends State<QuizzlerStatefulApp> {
 
         //Update the question statement
         questionStatement = currentQuiz.statementOfCurrentQuestion;
+
+        //Check if the quiz ended:
+        if (currentQuiz.isQuizFinished) {
+          Alert(
+            context: context,
+            type: AlertType.success,
+            title: "Quiz Finished",
+            desc:
+                "Your Score: ${currentQuiz.totalScore} (${(100 * currentQuiz.totalScore / currentQuiz.maxScore).toStringAsFixed(2)}%).",
+            buttons: [
+              DialogButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                width: 120,
+                child: const Text(
+                  "Reset",
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+              ),
+            ],
+          ).show();
+          resetQuiz();
+        }
       });
     }
   }
